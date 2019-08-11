@@ -1,5 +1,12 @@
+# For a reference, see:
+# https://crate-ci.github.io/azure-pipelines/
+
 stages:
- - template: azure/stages.yml@templates
+
+  - template: azure/stages.yml@templates
+    rustfmt: false
+    rustfmt_beta: false
+
 
 resources:
   repositories:
