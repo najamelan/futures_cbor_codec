@@ -13,7 +13,7 @@ serde = "^1"
 serde_cbor = "^0.10"
 
 [dependencies.futures_codec]
-path = "../futures-codec"
+git = "https://github.com/matthunz/futures-codec.git"
 
 [dev-dependencies]
 futures-preview = "^0.3.0-alpha"

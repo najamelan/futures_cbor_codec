@@ -25,7 +25,7 @@ dependencies:
   serde         : ^1
   serde_cbor    : ^0.10
   # futures_codec : ^0.2
-  futures_codec : { path: ../futures-codec }
+  futures_codec : { git: "https://github.com/matthunz/futures-codec.git" }
   log           : ^0.4
 
 dev-dependencies:
