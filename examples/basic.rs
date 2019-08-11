@@ -1,80 +1,93 @@
-extern crate tokio;
-extern crate tokio_serde_cbor;
+//! Example demonstration how to use the codec with futures 0.3 networking and the futures_codec crate.
+//! Run with `cargo run --example basic`.
+//
+#![feature(async_await)]
 
-use std::net::{TcpListener as StdTcpListener, TcpStream as StdTcpStream};
 
-use tokio::codec::Decoder;
-use tokio::net::tcp::TcpStream;
-use tokio::prelude::*;
-use tokio::reactor::Handle;
-use tokio::runtime::Runtime;
+use
+{
+	futures            :: { SinkExt, StreamExt, executor::block_on } ,
+	futures_codec      :: { Framed                                 } ,
+	futures_cbor_codec :: { Codec                                  } ,
+	std                :: { collections::HashMap                   } ,
+	romio              :: { TcpListener, TcpStream                 } ,
+};
 
-use tokio_serde_cbor::Codec;
-
-use std::collections::HashMap;
-
-type Error = Box<dyn std::error::Error + Send + Sync>;
 
 // We create some test data to serialize. This works because Serde implements
 // Serialize and Deserialize for HashMap, so the codec can frame this type.
+//
 type TestData = HashMap<String, usize>;
 
+
 /// Something to test with. It doesn't really matter what it is.
-fn test_data() -> TestData {
-    let mut data = HashMap::new();
-    data.insert("hello".to_owned(), 42);
-    data.insert("world".to_owned(), 0);
-    data
+//
+fn test_data() -> TestData
+{
+	let mut data = HashMap::new();
+
+	data.insert( "hello".to_string(), 42 );
+	data.insert( "world".to_string(), 0  );
+
+	data
 }
 
-/// Creates a connected pair of sockets.
-///
-/// This is similar to UnixStream::socket_pair, but works on windows too.
-///
-/// This is blocking, so it arguably doesn't belong into an async application, but this is not the
-/// point of the example here.
-fn socket_pair() -> Result<(TcpStream, TcpStream), Error> {
-    // port 0 = let the OS choose
-    let listener = StdTcpListener::bind("127.0.0.1:0")?;
-    let stream1 = StdTcpStream::connect(listener.local_addr()?)?;
-    let stream2 = listener.accept()?.0;
-    let stream1 = TcpStream::from_std(stream1, &Handle::default())?;
-    let stream2 = TcpStream::from_std(stream2, &Handle::default())?;
-    Ok((stream1, stream2))
+
+
+/// Creates a connected pair of tcp sockets.
+//
+async fn socket_pair() -> Result<(TcpStream, TcpStream), Box<dyn std::error::Error + Send + Sync> >
+{
+	// port 0 = let the OS choose
+	//
+	let mut listener = TcpListener::bind   ( &"127.0.0.1:0".parse()? )? ;
+	let     stream1  = TcpStream  ::connect( &listener.local_addr()? )  ;
+
+	let mut incoming = listener.incoming();
+	let     stream2  = incoming.next();
+
+	Ok(( stream1.await?, stream2.await.expect( "some connection")? ))
 }
 
-fn main() -> Result<(), Error> {
-    // This creates a pair of TCP domain sockets that are connected together.
-    let (sender_socket, receiver_socket) = socket_pair()?;
 
-    // Create the codec, type annotations are needed here.
-    let codec: Codec<TestData, TestData> = Codec::new();
 
-    // Get read and write parts of our streams (we ignore the other directions, but we could
-    // .split() them if we wanted to talk both ways).
-    let sender = codec.clone().framed(sender_socket);
-    let receiver = codec.framed(receiver_socket);
+// In a real life scenario the sending and receiving end usually are in different processes.
+// We could simulate that somewhat by putting them in separate async blocks and spawning those,
+// but since we only send in one direction, I chose to keep it simple.
+//
+// Obviously in production code you should do some real error handling rather than using
+// `expect`. However for this example, almost any error would fatal, so we might as well.
+//
+fn main()
+{
+	let program = async
+	{
+		// This creates a pair of TCP domain sockets that are connected together.
+		//
+		let (sender_socket, receiver_socket) = socket_pair().await.expect( "create socketpair" );
 
-    // This is the data we will send over.
-    let msg1 = test_data();
-    let msg2 = test_data();
+		// Type annotations are needed unfortunately. The compiler won't infer them just yet.
+		//
+		let mut receiver = Framed::new( receiver_socket, Codec::<TestData, TestData>::new() );
+		let mut sender   = Framed::new( sender_socket  , Codec::<TestData, TestData>::new() );
 
-    // Send method comes from Sink and it will return a future we can spawn with tokio.
-    // It consumes self, so we need to chain the next send with then.
-    let send_all = sender
-            .send(msg1)
-            .and_then(|sender| sender.send(msg2))
-            // Close the sink (otherwise it would get returned throughout the join and block_on and
-            // the for_each would wait for more messages).
-            .map(|sender| drop(sender));
+		sender.send( test_data() ).await.expect( "send message1" );
+		sender.send( test_data() ).await.expect( "send message2" );
+		sender.close().await.expect( "close sender" );
 
-    // for each frame, thus for each entire object we receive.
-    let recv_all = receiver.for_each(|msg| {
-        println!("Received: {:#?}", msg);
-        Ok(())
-    });
+		// Needed because otherwise romio doesn't close the tcpstream:
+		// https://github.com/withoutboats/romio/issues/81
+		//
+		drop( sender );
 
-    Runtime::new()?.block_on_all(send_all.join(recv_all))?;
 
-    Ok(())
+		// Transpose here turns an Option to a Result into a Result to an Option for convenience.
+		//
+		while let Some(msg) = receiver.next().await.transpose().expect( "receive message" )
+		{
+			println!( "Received: {:#?}", msg );
+		}
+	};
+
+	block_on( program );
 }
