@@ -14,18 +14,24 @@
 //! in some other way (eg. length-prefix encoding) and CBOR is only the payload, you'd use a codec
 //! for the other framing and use `.map` on the received stream and sink to convert the messages.
 
-use std::default::Default;
-use std::error::Error as ErrorTrait;
-use std::fmt::{Display, Formatter, Result as FmtResult};
-use std::io::{Error as IoError, Read, Result as IoResult, Write};
-use std::marker::PhantomData;
+// use std::default::Default;
+use
+{
+    std::
+    {
+        error  :: { Error as ErrorTrait                                   } ,
+        fmt    :: { { Display, Formatter, Result as FmtResult }           } ,
+        io     :: { { Error as IoError, Read, Result as IoResult, Write } } ,
+        marker :: { PhantomData                                           } ,
+    },
 
-use bytes::BytesMut;
-use serde::{Deserialize, Serialize};
-use serde_cbor::de::{Deserializer, IoRead};
-use serde_cbor::error::Error as CborError;
-use serde_cbor::ser::{IoWrite, Serializer};
-use tokio_io::codec::{Decoder as IoDecoder, Encoder as IoEncoder};
+    bytes         :: { BytesMut                                              } ,
+    serde         :: { { Deserialize, Serialize}                             } ,
+    serde_cbor    :: { de::{Deserializer, IoRead}, error::Error as CborError } ,
+    serde_cbor    :: { ser::{IoWrite, Serializer}                            } ,
+    futures_codec :: { {Decoder as IoDecoder, Encoder as IoEncoder }         } ,
+};
+
 
 /// Errors returned by encoding and decoding.
 #[derive(Debug)]
@@ -111,34 +117,47 @@ impl<'de, Item: Deserialize<'de>> Default for Decoder<Item> {
     }
 }
 
-impl<'de, Item: Deserialize<'de>> IoDecoder for Decoder<Item> {
-    type Item = Item;
-    type Error = Error;
-    fn decode(&mut self, src: &mut BytesMut) -> Result<Option<Item>, Error> {
+impl<'de, Item: Deserialize<'de>> IoDecoder for Decoder<Item>
+{
+    type Item  = Item  ;
+    type Error = Error ;
+
+    fn decode( &mut self, src: &mut BytesMut ) -> Result<Option<Item>, Error>
+    {
         let mut pos = 0;
-        let result = {
-            let mut slice: &[u8] = src;
-            let reader = Counted {
-                r: &mut slice,
-                pos: &mut pos,
-            };
-            let reader = IoRead::new(reader);
-            // Use the deserializer directly, instead of using `deserialize_from`. We explicitly do
-            // *not* want to check that there are no trailing bytes ‒ there may be, and they are
-            // the next frame.
-            let mut deserializer = Deserializer::new(reader);
-            Item::deserialize(&mut deserializer)
-        };
-        match result {
+
+        let mut slice: &[u8] = src;
+
+        let reader = IoRead::new( Counted
+        {
+            r  : &mut slice ,
+            pos: &mut pos   ,
+        });
+
+        // Use the deserializer directly, instead of using `deserialize_from`. We explicitly do
+        // *not* want to check that there are no trailing bytes ‒ there may be, and they are
+        // the next frame.
+        //
+        let mut deserializer = Deserializer::new(reader);
+
+
+        match Item::deserialize( &mut deserializer )
+        {
             // If we read the item, we also need to consume the corresponding bytes.
-            Ok(item) => {
+            //
+            Ok(item) =>
+            {
                 src.split_to(pos);
                 Ok(Some(item))
             },
+
             // Sometimes the EOF is signalled as IO error
-            Err(ref error) if error.is_eof() => Ok(None),
+            //
+            Err( ref error ) if error.is_eof() => Ok( None ),
+
             // Any other error is simply passed through.
-            Err(e) => Err(e.into()),
+            //
+            Err(e) => Err( e.into() ),
         }
     }
 }
