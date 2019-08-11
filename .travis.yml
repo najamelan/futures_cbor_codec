@@ -1,16 +1,21 @@
 language: rust
+rust    : nightly
 cache   : cargo
 
-rust:
-  - nightly
+matrix:
 
-os:
-  - linux
-  - osx
-  - windows
+  include:
+
+    - os: linux
+
+      script:
+        - ./ci-script.sh
+        - cargo test --target wasm32-unknown-unknown
+
+    - os    : osx
+      script: ./ci-script.sh
 
 
-script:
-  - cargo check
-  - cargo test
-  - cargo test --release
+    - os    : windows
+      script: ./ci-script.sh
+
