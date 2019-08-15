@@ -80,19 +80,16 @@ This crate works on WASM.
 
 ### Basic example
 ```rust
-//! Example demonstration how to use the codec with futures 0.3 networking and the futures_codec crate.
-//! Run with `cargo run --example basic`.
-//
 #![feature(async_await)]
 
 
 use
 {
-  async_ringbuffer   :: { *                                      } ,
-  futures            :: { SinkExt, StreamExt, executor::block_on } ,
-  futures_codec      :: { FramedRead, FramedWrite                } ,
-  futures_cbor_codec :: { Codec                                  } ,
-  std                :: { collections::HashMap                   } ,
+  futures_ringbuf    :: { *                                                    } ,
+  futures            :: { SinkExt, StreamExt, AsyncReadExt, executor::block_on } ,
+  futures_codec      :: { FramedRead, FramedWrite                              } ,
+  futures_cbor_codec :: { Decoder, Encoder                                     } ,
+  std                :: { collections::HashMap                                 } ,
 };
 
 
@@ -127,15 +124,16 @@ fn main()
 {
   let program = async
   {
-    let (write, read) = ring_buffer(32);
+    let (read, write) = RingBuffer::new(32).split();
 
     // Type annotations are needed unfortunately. The compiler won't infer them just yet.
     // On an object that implements both `AsyncRead` + `AsyncWrite`, we could use the
-    // `Framed` struct from futures_codec, but since ringbuffer doesn't have a unified
-    // object, we construct `FramedRead` and `FramedWrite` separately.
+    // `Framed` struct from futures_codec and the Codec struct from futures_cbor_codec,
+    // but since ringbuffer doesn't have a unified object, we construct `FramedRead` and
+    // `FramedWrite` separately.
     //
-    let mut reader = FramedRead ::new( read , Codec::<TestData, TestData>::new() );
-    let mut writer = FramedWrite::new( write, Codec::<TestData, TestData>::new() );
+    let mut reader = FramedRead ::new( read , Decoder::<TestData>::new() );
+    let mut writer = FramedWrite::new( write, Encoder::<TestData>::new() );
 
     writer.send( test_data() ).await.expect( "send message1" );
     writer.send( test_data() ).await.expect( "send message2" );
@@ -150,6 +148,9 @@ fn main()
 
   block_on( program );
 }
+
+
+
 ```
 
 ## API
