@@ -1,4 +1,4 @@
-//! Example demonstration how to use the codec with futures 0.3 networking and the futures_codec crate.
+//! Demonstration how to use the codec with futures 0.3 networking and the futures_codec crate.
 //! Run with `cargo run --example basic`.
 //
 #![feature(async_await)]
@@ -6,11 +6,11 @@
 
 use
 {
-	futures_ringbuf    :: { *                                                    } ,
-	futures            :: { SinkExt, StreamExt, AsyncReadExt, executor::block_on } ,
-	futures_codec      :: { FramedRead, FramedWrite                              } ,
-	futures_cbor_codec :: { Decoder, Encoder                                     } ,
-	std                :: { collections::HashMap                                 } ,
+	futures_ringbuf    :: { *                                      } ,
+	futures            :: { SinkExt, StreamExt, executor::block_on } ,
+	futures_codec      :: { Framed                                 } ,
+	futures_cbor_codec :: { Codec                                  } ,
+	std                :: { collections::HashMap                   } ,
 };
 
 
@@ -45,16 +45,11 @@ fn main()
 {
 	let program = async
 	{
-		let (read, write) = RingBuffer::new(32).split();
+		let mock = RingBuffer::new(32);
 
-		// Type annotations are needed unfortunately. The compiler won't infer them just yet.
-		// On an object that implements both `AsyncRead` + `AsyncWrite`, we could use the
-		// `Framed` struct from futures_codec and the Codec struct from futures_cbor_codec,
-		// but since ringbuffer doesn't have a unified object, we construct `FramedRead` and
-		// `FramedWrite` separately.
+		// Type annotations are needed unfortunately.
 		//
-		let mut reader = FramedRead ::new( read , Decoder::<TestData>::new() );
-		let mut writer = FramedWrite::new( write, Encoder::<TestData>::new() );
+		let (mut writer, mut reader) = Framed::new( mock , Codec::<TestData, TestData>::new() ).split();
 
 		writer.send( test_data() ).await.expect( "send message1" );
 		writer.send( test_data() ).await.expect( "send message2" );
