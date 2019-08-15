@@ -18,13 +18,13 @@ It turned out to work unchanged for futures-codec. All the credit for this funct
 ## Table of Contents
 
 - [Install](#install)
-  - [Upgrade](#upgrade)
-  - [Dependencies](#dependencies)
+   - [Upgrade](#upgrade)
+   - [Dependencies](#dependencies)
 - [Usage](#usage)
-  - [Basic Example](#basic-example)
-  - [API](#api)
+   - [Basic Example](#basic-example)
+   - [API](#api)
 - [Contributing](#contributing)
-  - [Code of Conduct](#code-of-conduct)
+   - [Code of Conduct](#code-of-conduct)
 - [License](#license)
 
 
@@ -36,14 +36,14 @@ With [cargo yaml](https://gitlab.com/storedbox/cargo-yaml):
 ```yaml
 dependencies:
 
-  futures_cbor_codec: ^0.1
+   futures_cbor_codec: ^0.1
 ```
 
 With raw Cargo.toml
 ```toml
 [dependencies]
 
-   futures_cbor_codec = "^0.1"
+    futures_cbor_codec = "^0.1"
 ```
 
 ### Upgrade
@@ -85,11 +85,11 @@ This crate works on WASM.
 
 use
 {
-  futures_ringbuf    :: { *                                      } ,
-  futures            :: { SinkExt, StreamExt, executor::block_on } ,
-  futures_codec      :: { Framed                                 } ,
-  futures_cbor_codec :: { Codec                                  } ,
-  std                :: { collections::HashMap                   } ,
+   futures_ringbuf    :: { *                                      } ,
+   futures            :: { SinkExt, StreamExt, executor::block_on } ,
+   futures_codec      :: { Framed                                 } ,
+   futures_cbor_codec :: { Codec                                  } ,
+   std                :: { collections::HashMap                   } ,
 };
 
 
@@ -103,12 +103,12 @@ type TestData = HashMap<String, usize>;
 //
 fn test_data() -> TestData
 {
-  let mut data = HashMap::new();
+   let mut data = HashMap::new();
 
-  data.insert( "hello".to_string(), 42 );
-  data.insert( "world".to_string(), 0  );
+   data.insert( "hello".to_string(), 42 );
+   data.insert( "world".to_string(), 0  );
 
-  data
+   data
 }
 
 
@@ -122,26 +122,26 @@ fn test_data() -> TestData
 //
 fn main()
 {
-  let program = async
-  {
-    let mock = RingBuffer::new(32);
+   let program = async
+   {
+      let mock = RingBuffer::new(32);
 
-    // Type annotations are needed unfortunately.
-    //
-    let (mut writer, mut reader) = Framed::new( mock , Codec::<TestData, TestData>::new() ).split();
+      // Type annotations are needed unfortunately.
+      //
+      let (mut writer, mut reader) = Framed::new( mock , Codec::<TestData, TestData>::new() ).split();
 
-    writer.send( test_data() ).await.expect( "send message1" );
-    writer.send( test_data() ).await.expect( "send message2" );
-    writer.close().await.expect( "close sender" );
+      writer.send( test_data() ).await.expect( "send message1" );
+      writer.send( test_data() ).await.expect( "send message2" );
+      writer.close().await.expect( "close sender" );
 
 
-    while let Some(msg) = reader.next().await.transpose().expect( "receive message" )
-    {
-      println!( "Received: {:#?}", msg );
-    }
-  };
+      while let Some(msg) = reader.next().await.transpose().expect( "receive message" )
+      {
+         println!( "Received: {:#?}", msg );
+      }
+   };
 
-  block_on( program );
+   block_on( program );
 }
 ```
 
