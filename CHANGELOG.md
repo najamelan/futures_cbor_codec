@@ -1,6 +1,10 @@
 # Changelog
 
-# 0.1.0 - 2019-08-13
+# 0.1.1 - 2019-08-15
+
+- Update the example in the readme which was forgotten
+
+# 0.1.0 - 2019-08-15
 
 - Fork from tokio-serde-cbor
 

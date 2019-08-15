@@ -3,11 +3,11 @@ package:
   # When releasing to crates.io:
   #
   # - Update CHANGELOG.md.
-  # - Update version numbers in install section of readme and lib.rs.
+  # - Update version numbers in install section of readme.
   # - merge dev branch into master
   # - create git tag
   #
-  version       : 0.1.0
+  version       : 0.1.1
   name          : futures_cbor_codec
   authors       : [ Naja Melan <najamelan@autistici.org> ]
   description   : A codec for framing an AsyncRead/AsyncWrite with cbor for all types that are serializable with serde
