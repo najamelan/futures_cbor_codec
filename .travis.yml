@@ -2,28 +2,58 @@ language: rust
 rust    : nightly
 cache   : cargo
 
+branches:
+  only:
+    - master
+    - dev
+
 matrix:
 
   include:
 
+    # This won't work because we use a nightly feature in dev-dependencies and the feature leaks:
+    #
+    # - rust  : stable
+    #   script: cargo check
+
+
     - os: linux
 
+      # But don't cache the cargo registry
+      # and remove wasm-pack binary to avoid the installer asking confirmation for overwriting it.
+      #
+      before_cache:
+        - rm -rf /home/travis/.cargo/registry
+        - rm -rf /home/travis/.cargo/bin/wasm-pack
+
+
+      # also for wasm tests
+      #
+      install:
+        - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+
       script:
-        - ./ci-script.sh
-        - rustup target add wasm32-unknown-unknown
-        - rustup target add aarch64-linux-android
-        - rustup target add x86_64-unknown-netbsd
-        - cargo test --target wasm32-unknown-unknown
-        - cargo test --target aarch64-linux-android
-        - cargo test --target x86_64-unknown-netbsd
+        - cargo test
+        - cargo test --release
+        - cargo doc --no-deps
+
+        - wasm-pack test  --firefox --headless
+        - wasm-pack test  --chrome  --headless
+
+        - wasm-pack test  --firefox --headless --release
+        - wasm-pack test  --chrome  --headless --release
+
 
     - os    : osx
       script:
-        - ./ci-script.sh
-        - rustup target add aarch64-apple-ios
-        - cargo test --target aarch64-apple-ios
+        - cargo test
+        - cargo test --release
 
 
     - os    : windows
-      script: ./ci-script.sh
+      script:
+        - cargo test
+        - cargo test --release
+
 

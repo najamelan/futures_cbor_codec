@@ -6,11 +6,11 @@
 
 use
 {
-	futures            :: { SinkExt, StreamExt, executor::block_on } ,
-	futures_codec      :: { Framed                                 } ,
-	futures_cbor_codec :: { Codec                                  } ,
-	std                :: { collections::HashMap                   } ,
-	romio              :: { TcpListener, TcpStream                 } ,
+	futures_ringbuf    :: { *                                                    } ,
+	futures            :: { SinkExt, StreamExt, AsyncReadExt, executor::block_on } ,
+	futures_codec      :: { FramedRead, FramedWrite                              } ,
+	futures_cbor_codec :: { Decoder, Encoder                                     } ,
+	std                :: { collections::HashMap                                 } ,
 };
 
 
@@ -34,23 +34,6 @@ fn test_data() -> TestData
 
 
 
-/// Creates a connected pair of tcp sockets.
-//
-async fn socket_pair() -> Result<(TcpStream, TcpStream), Box<dyn std::error::Error + Send + Sync> >
-{
-	// port 0 = let the OS choose
-	//
-	let mut listener = TcpListener::bind   ( &"127.0.0.1:0".parse()? )? ;
-	let     stream1  = TcpStream  ::connect( &listener.local_addr()? )  ;
-
-	let mut incoming = listener.incoming();
-	let     stream2  = incoming.next();
-
-	Ok(( stream1.await?, stream2.await.expect( "some connection")? ))
-}
-
-
-
 // In a real life scenario the sending and receiving end usually are in different processes.
 // We could simulate that somewhat by putting them in separate async blocks and spawning those,
 // but since we only send in one direction, I chose to keep it simple.
@@ -62,28 +45,23 @@ fn main()
 {
 	let program = async
 	{
-		// This creates a pair of TCP domain sockets that are connected together.
-		//
-		let (sender_socket, receiver_socket) = socket_pair().await.expect( "create socketpair" );
+		let (read, write) = RingBuffer::new(32).split();
 
 		// Type annotations are needed unfortunately. The compiler won't infer them just yet.
+		// On an object that implements both `AsyncRead` + `AsyncWrite`, we could use the
+		// `Framed` struct from futures_codec and the Codec struct from futures_cbor_codec,
+		// but since ringbuffer doesn't have a unified object, we construct `FramedRead` and
+		// `FramedWrite` separately.
 		//
-		let mut receiver = Framed::new( receiver_socket, Codec::<TestData, TestData>::new() );
-		let mut sender   = Framed::new( sender_socket  , Codec::<TestData, TestData>::new() );
+		let mut reader = FramedRead ::new( read , Decoder::<TestData>::new() );
+		let mut writer = FramedWrite::new( write, Encoder::<TestData>::new() );
 
-		sender.send( test_data() ).await.expect( "send message1" );
-		sender.send( test_data() ).await.expect( "send message2" );
-		sender.close().await.expect( "close sender" );
-
-		// Needed because otherwise romio doesn't close the tcpstream:
-		// https://github.com/withoutboats/romio/issues/81
-		//
-		drop( sender );
+		writer.send( test_data() ).await.expect( "send message1" );
+		writer.send( test_data() ).await.expect( "send message2" );
+		writer.close().await.expect( "close sender" );
 
 
-		// Transpose here turns an Option to a Result into a Result to an Option for convenience.
-		//
-		while let Some(msg) = receiver.next().await.transpose().expect( "receive message" )
+		while let Some(msg) = reader.next().await.transpose().expect( "receive message" )
 		{
 			println!( "Received: {:#?}", msg );
 		}
@@ -91,3 +69,5 @@ fn main()
 
 	block_on( program );
 }
+
+
