@@ -11,6 +11,15 @@
 #![ forbid ( unsafe_code                                          ) ]
 #![ allow  ( clippy::suspicious_else_formatting                   ) ]
 
+#![ warn
+(
+	missing_debug_implementations ,
+	missing_docs                  ,
+	nonstandard_style             ,
+	rust_2018_idioms              ,
+)]
+
+
 use
 {
 	std::
@@ -64,7 +73,7 @@ impl From<CborError> for Error {
 }
 
 impl Display for Error {
-	fn fmt(&self, fmt: &mut Formatter) -> FmtResult {
+	fn fmt(&self, fmt: &mut Formatter<'_>) -> FmtResult {
 		match self {
 			Error::Io(e) => e.fmt(fmt),
 			Error::Cbor(e) => e.fmt(fmt),
@@ -89,8 +98,9 @@ impl ErrorTrait for Error {
 /// This wraps a `Read` into another `Read` that keeps track of how many bytes were read. This is
 /// needed, as there's no way to get the position out of the CBOR decoder.
 //
-struct Counted<'a, R: 'a> {
-	r: &'a mut R,
+struct Counted<'a, R>
+{
+	r  : &'a mut R    ,
 	pos: &'a mut usize,
 }
 
