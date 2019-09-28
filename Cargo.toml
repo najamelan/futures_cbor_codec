@@ -8,7 +8,7 @@ repository = "najamelan/futures_cbor_codec"
 
 [dependencies]
 bytes = "^0.4"
-futures_codec = "^0.2"
+futures_codec = "^0.3"
 serde = "^1"
 serde_cbor = "^0.10"
 
@@ -36,11 +36,6 @@ version = "0.1.2"
 [package.metadata."docs.rs"]
 features = ["external_doc"]
 
-[patch]
-[patch.crates-io]
-[patch.crates-io.futures_codec]
-git = "https://github.com/matthunz/futures-codec.git"
-
 [target]
 [target."cfg(not( target_arch = \"wasm32\" ))"]
 [target."cfg(not( target_arch = \"wasm32\" ))".dev-dependencies]
@@ -54,7 +49,3 @@ wasm-bindgen-test = "^0.2"
 [target."cfg(target_arch = \"wasm32\")".dev-dependencies.getrandom]
 features = ["wasm-bindgen"]
 version = "^0.1"
-
-[target."cfg(target_arch = \"wasm32\")".dev-dependencies.naja_async_runtime]
-default-features = false
-version = "^0.3"
