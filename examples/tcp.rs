@@ -1,12 +1,6 @@
 //! Example demonstration how to use the codec with futures 0.3 networking and the futures_codec crate.
 //! Run with `cargo run --example basic`.
 //
-#![feature(async_await)]
-
-
-
-
-
 // In a real life scenario the sending and receiving end usually are in different processes.
 // We could simulate that somewhat by putting them in separate async blocks and spawning those,
 // but since we only send in one direction, I chose to keep it simple.

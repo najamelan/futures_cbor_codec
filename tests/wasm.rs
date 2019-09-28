@@ -1,5 +1,4 @@
 #![ cfg( target_arch = "wasm32" )]
-#![ feature( async_await )]
 
 
 // Verify basic functionality on wasm
@@ -11,12 +10,10 @@
 
 use
 {
-	wasm_bindgen_test :: { *                                 } ,
-	wasm_bindgen      :: { UnwrapThrowExt                    } ,
-	async_runtime     :: { *                                 } ,
-	futures_ringbuf   :: { *                                 } ,
-	futures           :: { SinkExt, StreamExt, future::ready } ,
-	futures_codec     :: { Framed, LinesCodec                } ,
+	wasm_bindgen_test :: { *                                                               } ,
+	futures_ringbuf   :: { *                                                               } ,
+	futures           :: { SinkExt, StreamExt, future::{ ready, join }, executor::block_on } ,
+	futures_codec     :: { Framed, LinesCodec                                              } ,
 };
 
 wasm_bindgen_test_configure!(run_in_browser);
@@ -46,8 +43,7 @@ fn basic_example()
 		assert_eq!( count, 2 );
 	};
 
-	rt::spawn( send_task    ).expect_throw( "spawn future" );
-	rt::spawn( receive_task ).expect_throw( "spawn future" );
+	block_on( join( send_task, receive_task ) );
 }
 
 
