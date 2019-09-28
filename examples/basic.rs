@@ -1,9 +1,6 @@
 //! Demonstration how to use the codec with futures 0.3 networking and the futures_codec crate.
 //! Run with `cargo run --example basic`.
 //
-#![feature(async_await)]
-
-
 use
 {
 	futures_ringbuf    :: { *                                      } ,

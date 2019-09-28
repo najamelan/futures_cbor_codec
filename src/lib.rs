@@ -6,10 +6,26 @@
 
 
 #![ doc    ( html_root_url = "https://docs.rs/futures_cbor_codec" ) ]
-#![ feature( async_await                                          ) ]
 #![ deny   ( missing_docs                                         ) ]
 #![ forbid ( unsafe_code                                          ) ]
 #![ allow  ( clippy::suspicious_else_formatting                   ) ]
+
+
+#![ warn
+(
+	missing_debug_implementations ,
+	missing_docs                  ,
+	nonstandard_style             ,
+	rust_2018_idioms              ,
+	trivial_casts                 ,
+	trivial_numeric_casts         ,
+	unused_extern_crates          ,
+	unused_qualifications         ,
+	// single_use_lifetimes          , // See: https://github.com/rust-lang/rust/issues/60554
+	unreachable_pub               ,
+	variant_size_differences      ,
+)]
+
 
 use
 {
@@ -29,6 +45,8 @@ use
 };
 
 
+#[ allow( variant_size_differences ) ]
+//
 /// Errors returned by encoding and decoding.
 //
 #[derive(Debug)]
@@ -64,7 +82,7 @@ impl From<CborError> for Error {
 }
 
 impl Display for Error {
-	fn fmt(&self, fmt: &mut Formatter) -> FmtResult {
+	fn fmt(&self, fmt: &mut Formatter<'_>) -> FmtResult {
 		match self {
 			Error::Io(e) => e.fmt(fmt),
 			Error::Cbor(e) => e.fmt(fmt),
@@ -89,12 +107,13 @@ impl ErrorTrait for Error {
 /// This wraps a `Read` into another `Read` that keeps track of how many bytes were read. This is
 /// needed, as there's no way to get the position out of the CBOR decoder.
 //
-struct Counted<'a, R: 'a> {
-	r: &'a mut R,
+struct Counted<'a, R>
+{
+	r  : &'a mut R    ,
 	pos: &'a mut usize,
 }
 
-impl<'a, R: Read> Read for Counted<'a, R> {
+impl<R: Read> Read for Counted<'_, R> {
 	fn read(&mut self, buf: &mut [u8]) -> IoResult<usize> {
 		match self.r.read(buf) {
 			Ok(size) => {
@@ -129,6 +148,7 @@ impl<'de, Item: Deserialize<'de>> Decoder<Item>
 }
 
 
+
 impl<'de, Item: Deserialize<'de>> Default for Decoder<Item>
 {
 	fn default() -> Self
@@ -136,6 +156,7 @@ impl<'de, Item: Deserialize<'de>> Default for Decoder<Item>
 		Self::new()
 	}
 }
+
 
 
 impl<'de, Item: Deserialize<'de>> IoDecoder for Decoder<Item>
@@ -264,7 +285,7 @@ impl<Item: Serialize> Default for Encoder<Item>
 //
 struct BytesWriter<'a>(&'a mut BytesMut);
 
-impl<'a> Write for BytesWriter<'a>
+impl Write for BytesWriter<'_>
 {
 	fn write(&mut self, buf: &[u8]) -> IoResult<usize>
 	{
@@ -328,6 +349,7 @@ pub struct Codec<Dec, Enc>
 }
 
 
+
 impl<'de, Dec: Deserialize<'de>, Enc: Serialize> Codec<Dec, Enc>
 {
 	/// Creates a new codec
@@ -366,11 +388,13 @@ impl<'de, Dec: Deserialize<'de>, Enc: Serialize> Codec<Dec, Enc>
 	}
 }
 
+
 impl<'de, Dec: Deserialize<'de>, Enc: Serialize> Default for Codec<Dec, Enc> {
 	fn default() -> Self {
 		Self::new()
 	}
 }
+
 
 impl<'de, Dec: Deserialize<'de>, Enc: Serialize> IoDecoder for Codec<Dec, Enc> {
 	type Item = Dec;
@@ -379,6 +403,7 @@ impl<'de, Dec: Deserialize<'de>, Enc: Serialize> IoDecoder for Codec<Dec, Enc> {
 		self.dec.decode(src)
 	}
 }
+
 
 impl<'de, Dec: Deserialize<'de>, Enc: Serialize> IoEncoder for Codec<Dec, Enc> {
 	type Item = Enc;
