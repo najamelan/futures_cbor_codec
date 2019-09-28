@@ -20,8 +20,9 @@ package:
   edition       : "2018"
 
   metadata:
-    docs.rs:
-      features: [ external_doc ]
+    docs:
+      rs:
+        features: [ external_doc ]
 
 
 features:
