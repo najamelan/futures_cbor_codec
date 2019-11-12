@@ -42,11 +42,14 @@ fn main()
 {
 	let program = async
 	{
-		let mock = RingBuffer::new(32);
-
-		// Type annotations are needed unfortunately.
+		// This creates a pair of TCP domain sockets that are connected together.
 		//
-		let (mut writer, mut reader) = Framed::new( mock , Codec::<TestData, TestData>::new() ).split();
+		let (sender_socket, receiver_socket) = Endpoint::pair( 128, 128 );
+
+		// Type annotations are needed unfortunately. The compiler won't infer them just yet.
+		//
+		let mut reader = Framed::new( receiver_socket, Codec::<TestData, TestData>::new() );
+		let mut writer = Framed::new( sender_socket  , Codec::<TestData, TestData>::new() );
 
 		writer.send( test_data() ).await.expect( "send message1" );
 		writer.send( test_data() ).await.expect( "send message2" );
