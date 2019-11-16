@@ -30,7 +30,7 @@ license = "Apache-2.0/MIT"
 name = "futures_cbor_codec"
 readme = "README.md"
 repository = "https://github.com/najamelan/futures_cbor_codec"
-version = "0.1.4"
+version = "0.1.5"
 
 [package.metadata]
 [package.metadata.docs]

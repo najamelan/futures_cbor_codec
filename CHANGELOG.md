@@ -1,6 +1,10 @@
 # Changelog
 
-# 0.1.4 - 2019-11-16
+# 0.1.5 - 2019-11-16
+
+- update wasm-bindgen-test.
+
+# 0.1.4 - 2019-11-12
 
 - update to futures 0.3.
 - remove tcp example for now because romio is no longer maintained.

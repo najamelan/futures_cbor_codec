@@ -10,7 +10,7 @@ package:
   # - merge dev branch into master
   # - create git tag
   #
-  version       : 0.1.4
+  version       : 0.1.5
   name          : futures_cbor_codec
   authors       : [ Naja Melan <najamelan@autistici.org> ]
   description   : A codec for framing an AsyncRead/AsyncWrite with cbor for all types that are serializable with serde
