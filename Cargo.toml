@@ -7,7 +7,8 @@ status = "actively-developed"
 repository = "najamelan/futures_cbor_codec"
 
 [dependencies]
-bytes = "^0.4"
+bytes = "^0.5"
+futures = "^0.3"
 futures_codec = "^0.3"
 serde = "^1"
 serde_cbor = "^0.10"
@@ -30,7 +31,7 @@ license = "Apache-2.0/MIT"
 name = "futures_cbor_codec"
 readme = "README.md"
 repository = "https://github.com/najamelan/futures_cbor_codec"
-version = "0.1.5"
+version = "0.2.0"
 
 [package.metadata]
 [package.metadata.docs]

@@ -10,7 +10,7 @@ package:
   # - merge dev branch into master
   # - create git tag
   #
-  version       : 0.1.5
+  version       : 0.2.0
   name          : futures_cbor_codec
   authors       : [ Naja Melan <najamelan@autistici.org> ]
   description   : A codec for framing an AsyncRead/AsyncWrite with cbor for all types that are serializable with serde
@@ -41,10 +41,17 @@ badges:
 
 dependencies:
 
-  bytes         : ^0.4
-  serde         : ^1
+  # Public dependencies (bump major if changing any version number here)
+  # Means we use types from these crates in our public API.
+  #
+  futures       : ^0.3
   serde_cbor    : ^0.10
-  futures_codec : ^0.3
+  futures_codec : ^0.3   # traits Encoder/Decoder
+  bytes         : ^0.5   # public dep of futures_codec, so they should always change together
+  serde         : ^1     # we require Serialize + Deserialize
+
+  # Private dependencies
+  #
 
 
 dev-dependencies:

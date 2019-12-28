@@ -37,7 +37,7 @@ use
 		marker :: { PhantomData                                           } ,
 	},
 
-	bytes         :: { BytesMut                                              } ,
+	bytes         :: { BytesMut, Buf                                         } ,
 	serde         :: { { Deserialize, Serialize}                             } ,
 	serde_cbor    :: { de::{Deserializer, IoRead}, error::Error as CborError } ,
 	serde_cbor    :: { ser::{IoWrite, Serializer}                            } ,
@@ -189,7 +189,7 @@ impl<'de, Item: Deserialize<'de>> IoDecoder for Decoder<Item>
 			//
 			Ok(item) =>
 			{
-				src.split_to(pos);
+				src.advance(pos);
 				Ok(Some(item))
 			},
 

@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.2.0 - 2019-12-28
+
+- **BREAKING CHANGE**: update bytes to 0.5.
+
 # 0.1.5 - 2019-11-16
 
 - update wasm-bindgen-test.

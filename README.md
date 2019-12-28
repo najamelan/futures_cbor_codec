@@ -36,14 +36,14 @@ With [cargo yaml](https://gitlab.com/storedbox/cargo-yaml):
 ```yaml
 dependencies:
 
-   futures_cbor_codec: ^0.1
+   futures_cbor_codec: ^0.2
 ```
 
 With raw Cargo.toml
 ```toml
 [dependencies]
 
-    futures_cbor_codec = "^0.1"
+    futures_cbor_codec = "0.2"
 ```
 
 ### Upgrade
