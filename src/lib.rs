@@ -132,7 +132,9 @@ impl<R: Read> Read for Counted<'_, R> {
 /// that is `serde`s `Deserialize` can be decoded this way.
 //
 #[derive(Clone, Debug)]
-pub struct Decoder<Item> {
+//
+pub struct Decoder<Item>
+{
 	_data: PhantomData<fn() -> Item>,
 }
 
@@ -166,9 +168,8 @@ impl<'de, Item: Deserialize<'de>> IoDecoder for Decoder<Item>
 
 	fn decode( &mut self, src: &mut BytesMut ) -> Result<Option<Item>, Error>
 	{
-		let mut pos = 0;
-
-		let mut slice: &[u8] = src;
+		let mut pos          = 0   ;
+		let mut slice: &[u8] = src ;
 
 		let reader = IoRead::new( Counted
 		{
@@ -231,9 +232,9 @@ pub enum SdMode
 //
 pub struct Encoder<Item>
 {
-	_data: PhantomData<fn(Item)>,
-	sd: SdMode,
-	packed: bool,
+	_data : PhantomData<fn(Item)> ,
+	sd    : SdMode                ,
+	packed: bool                  ,
 }
 
 impl<Item: Serialize> Encoder<Item>
@@ -243,11 +244,13 @@ impl<Item: Serialize> Encoder<Item>
 	/// By default, it doesn't do packed encoding (it includes struct field names) and it doesn't
 	/// prefix the frames with self-describe tag.
 	//
-	pub fn new() -> Self {
-		Self {
-			_data: PhantomData,
-			sd: SdMode::Never,
-			packed: false,
+	pub fn new() -> Self
+	{
+		Self
+		{
+			_data : PhantomData   ,
+			sd    : SdMode::Never ,
+			packed: false         ,
 		}
 	}
 
@@ -264,7 +267,8 @@ impl<Item: Serialize> Encoder<Item>
 	/// but it also means the decoding end must know the exact order of fields and it can't be
 	/// something like python, which would want to get a dictionary out of it.
 	//
-	pub fn packed(self, packed: bool) -> Self {
+	pub fn packed(self, packed: bool) -> Self
+	{
 		Self { packed, ..self }
 	}
 }
