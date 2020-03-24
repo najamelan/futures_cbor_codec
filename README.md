@@ -152,16 +152,8 @@ Api documentation can be found on [docs.rs](https://docs.rs/futures_cbor_codec).
 
 ## Contributing
 
-This repository accepts contributions. Ideas, questions, feature requests and bug reports can be filed through github issues.
+Please check out the [contribution guidelines](https://github.com/najamelan/futures_cbor_codec/blob/master/CONTRIBUTING.md).
 
-Pull Requests are welcome on github. By commiting pull requests, you accept that your code might be modified and reformatted to fit the project coding style or to improve the implementation. Please discuss what you want to see modified before filing a pull request if you don't want to be doing work that might be rejected.
-
-Please file PR's against the `dev` branch, don't forget to update the changelog and the documentation.
-
-Unless you explicitly state otherwise, any contribution intentionally
-submitted for inclusion in the work by you, as defined in the Apache-2.0
-license, shall be dual licensed as above, without any additional terms
-or conditions.
 
 ### Testing
 
