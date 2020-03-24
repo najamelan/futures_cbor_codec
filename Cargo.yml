@@ -20,17 +20,14 @@ package:
   keywords      : [ cbor, futures, framing, serialization ]
   categories    : [ asynchronous, network-programming ]
   license       : Apache-2.0/MIT
+  exclude       : [ tests, examples, ci, .travis.yml, TODO.md, CONTRIBUTING.md ]
   edition       : "2018"
 
   metadata:
     docs:
       rs:
-        features: [ external_doc ]
-
-
-features:
-
-  external_doc: []
+        all-features: true
+        targets     : []
 
 
 badges:
@@ -58,6 +55,18 @@ dev-dependencies:
 
   futures_ringbuf : ^0.2
   futures         : ^0.3
+
+
+build-dependencies:
+
+  rustc_version: ^0.2
+
+
+profile:
+
+  release:
+
+    codegen-units: 1
 
 
 target:
