@@ -13,8 +13,14 @@ cache:
 before_cache:
   - rm -rf /home/travis/.cargo/git
   - rm -rf /home/travis/.cargo/registry
-  - rm -rf /home/travis/.cargo/bin/wasm-pack
   - rm -rf /home/travis/.cargo/bin/cargo-tarpaulin
+  - rm -rf target/debug/incremental/{futures_cbor_codec,build_script_build}-*
+  - rm -rf target/debug/.fingerprint/futures_cbor_codec-*
+  - rm -rf target/debug/build/futures_cbor_codec-*
+  - rm -rf target/debug/deps/libfutures_cbor_codec-*
+  - rm -rf target/debug/deps/futures_cbor_codec-*
+  - rm -rf target/debug/{futures_cbor_codec,libfutures_cbor_codec}.d
+  - cargo clean -p futures_cbor_codec
 
 
 branches:
