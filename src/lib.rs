@@ -45,7 +45,7 @@ use
 //
 /// Errors returned by encoding and decoding.
 //
-#[derive(Debug)]
+#[derive(Debug)] #[ non_exhaustive ]
 //
 pub enum Error
 {
@@ -56,13 +56,6 @@ pub enum Error
 	/// An error happend when encoding/decoding Cbor data.
 	//
 	Cbor(CborError),
-
-	// This forces users to add a `_ =>` in match statements, so that future variants can be
-	// added without it being a breaking change.
-	// TODO: track: https://github.com/rust-lang/rust/issues/44109
-	//
-	#[doc(hidden)]
-	__NonExhaustive__,
 }
 
 impl From<IoError> for Error {
@@ -82,7 +75,6 @@ impl Display for Error {
 		match self {
 			Error::Io(e) => e.fmt(fmt),
 			Error::Cbor(e) => e.fmt(fmt),
-			Error::__NonExhaustive__ => unreachable!(),
 		}
 	}
 }
@@ -92,7 +84,6 @@ impl ErrorTrait for Error {
 		match self {
 			Error::Io(e) => Some(e),
 			Error::Cbor(e) => Some(e),
-			Error::__NonExhaustive__ => unreachable!(),
 		}
 	}
 }
@@ -418,8 +409,6 @@ mod tests {
 	use std::collections::HashMap;
 	use std::sync::Arc;
 
-	use serde_cbor;
-
 	use super::*;
 
 	type TestData = HashMap<String, usize>;
@@ -500,7 +489,7 @@ mod tests {
 		let decoded = serde_cbor::from_slice::<TestData>(&buffer[pos1..]).unwrap();
 		assert_eq!(data, decoded);
 		// Encoding once more the size stays the same
-		encoder.encode(data.clone(), &mut buffer).unwrap();
+		encoder.encode(data, &mut buffer).unwrap();
 		let pos3 = buffer.len();
 		assert_eq!(pos2 - pos1, pos3 - pos2);
 	}
