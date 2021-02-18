@@ -33,11 +33,11 @@ use
 		marker :: { PhantomData                                           } ,
 	},
 
-	bytes       :: { BytesMut, Buf                                         } ,
-	serde       :: { { Deserialize, Serialize}                             } ,
-	serde_cbor  :: { de::{Deserializer, IoRead}, error::Error as CborError } ,
-	serde_cbor  :: { ser::{IoWrite, Serializer}                            } ,
-	async_codec :: { {Decoder as IoDecoder, Encoder as IoEncoder }         } ,
+	bytes              :: { BytesMut, Buf                                         } ,
+	serde              :: { { Deserialize, Serialize}                             } ,
+	serde_cbor         :: { de::{Deserializer, IoRead}, error::Error as CborError } ,
+	serde_cbor         :: { ser::{IoWrite, Serializer}                            } ,
+	asynchronous_codec :: { {Decoder as IoDecoder, Encoder as IoEncoder }         } ,
 };
 
 

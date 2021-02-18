@@ -55,10 +55,10 @@ dependencies:
   # Public dependencies (bump major if changing any version number here)
   # Means we use types from these crates in our public API.
   #
-  async_codec : { version: ^0.6, package: asynchronous-codec }  # traits Encoder/Decoder
-  serde_cbor  : ^0.11
-  bytes       : ^1     # public dep of futures_codec, so they should always change together
-  serde       : ^1     # we require Serialize + Deserialize
+  asynchronous-codec: ^0.6   # traits Encoder/Decoder
+  serde_cbor        : ^0.11
+  bytes             : ^1     # public dep of futures_codec, so they should always change together
+  serde             : ^1     # we require Serialize + Deserialize
 
   # Private dependencies
   #

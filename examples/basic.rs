@@ -7,10 +7,7 @@ use
 	futures            :: { SinkExt, StreamExt, executor::block_on } ,
 	futures_cbor_codec :: { Codec                                  } ,
 	std                :: { collections::HashMap                   } ,
-
-	// crate asynchronous-codec, but in my Cargo.toml I shorten the name...
-	//
-	async_codec        :: { Framed                                 } ,
+	asynchronous_codec :: { Framed                                 } ,
 };
 
 

@@ -10,13 +10,10 @@ repository = "najamelan/futures_cbor_codec"
 rustc_version = "^0.3"
 
 [dependencies]
+asynchronous-codec = "^0.6"
 bytes = "^1"
 serde = "^1"
 serde_cbor = "^0.11"
-
-[dependencies.async_codec]
-package = "asynchronous-codec"
-version = "^0.6"
 
 [dev-dependencies]
 futures = "^0.3"

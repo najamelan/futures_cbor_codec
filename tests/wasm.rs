@@ -5,15 +5,15 @@
 //
 // Tested:
 //
-// - ✔ the code from the basic example
+// ✔ the code from the basic example
 
 
 use
 {
-	wasm_bindgen_test :: { *                                                               } ,
-	futures_ringbuf   :: { *                                                               } ,
-	futures           :: { SinkExt, StreamExt, future::{ ready, join }, executor::block_on } ,
-	futures_codec     :: { Framed, LinesCodec                                              } ,
+	wasm_bindgen_test  :: { *                                                               } ,
+	futures_ringbuf    :: { *                                                               } ,
+	futures            :: { SinkExt, StreamExt, future::{ ready, join }, executor::block_on } ,
+	asynchronous_codec :: { Framed, LinesCodec                                              } ,
 };
 
 wasm_bindgen_test_configure!(run_in_browser);

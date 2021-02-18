@@ -1,7 +1,7 @@
 # futures_cbor_codec
 
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-[![Build Status](https://api.travis-ci.org/najamelan/futures_cbor_codec.svg?branch=master)](https://travis-ci.org/najamelan/futures_cbor_codec)
+[![Build Status](https://github.com/najamelan/futures_cbor_codec/workflows/ci/badge.svg?branch=master)](https://github.com/najamelan/futures_cbor_codec/actions)
 [![Docs](https://docs.rs/futures_cbor_codec/badge.svg)](https://docs.rs/futures_cbor_codec)
 [![crates.io](https://img.shields.io/crates/v/futures_cbor_codec.svg)](https://crates.io/crates/futures_cbor_codec)
 
@@ -66,8 +66,7 @@ items.
 
 The encoded and decoded items are independent (you may want to encode references and decode
 owned data, or the protocol might be asymetric). If you want just one direction, you can use
-[`Decoder`](struct.Decoder.html) or [`Encoder`](struct.Encoder.html). If you want both, you
-better use [`Codec`](struct.Codec.html).
+[`Decoder`] or [`Encoder`]. If you want both, you better use [`Codec`].
 
 Note that this is useful if the CBOR itself defines the frames. If the messages are delimited
 in some other way (eg. length-prefix encoding) and CBOR is only the payload, you'd use a codec
@@ -87,7 +86,7 @@ use
 {
    futures_ringbuf    :: { *                                      } ,
    futures            :: { SinkExt, StreamExt, executor::block_on } ,
-   futures_codec      :: { Framed                                 } ,
+   asynchronous_codec :: { Framed                                 } ,
    futures_cbor_codec :: { Codec                                  } ,
    std                :: { collections::HashMap                   } ,
 };
@@ -169,13 +168,11 @@ or
 
 ### Code of conduct
 
-Any of the behaviors described in [point 4 "Unacceptable Behavior" of the Citizens Code of Conduct](http://citizencodeofconduct.org/#unacceptable-behavior) are not welcome here and might get you banned. If anyone including maintainers and moderators of the project fail to respect these/your limits, you are entitled to call them out.
+Any of the behaviors described in [point 4 "Unacceptable Behavior" of the Citizens Code of Conduct](https://github.com/stumpsyn/policies/blob/master/citizen_code_of_conduct.md#4-unacceptable-behavior) are not welcome here and might get you banned. If anyone, including maintainers and moderators of the project, fail to respect these/your limits, you are entitled to call them out.
 
 ## License
 
 Licensed under either of
 
- * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
- * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
-
-at your option.
+ * Apache License, Version 2.0, [LICENSE-APACHE](http://www.apache.org/licenses/LICENSE-2.0)
+ * MIT license [LICENSE-MIT](http://opensource.org/licenses/MIT) at your option.
