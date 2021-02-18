@@ -55,11 +55,10 @@ dependencies:
   # Public dependencies (bump major if changing any version number here)
   # Means we use types from these crates in our public API.
   #
-  futures       : ^0.3
-  serde_cbor    : ^0.11
-  futures_codec : ^0.4   # traits Encoder/Decoder
-  bytes         : ^0.5   # public dep of futures_codec, so they should always change together
-  serde         : ^1     # we require Serialize + Deserialize
+  async_codec : { version: ^0.6, package: asynchronous-codec }  # traits Encoder/Decoder
+  serde_cbor  : ^0.11
+  bytes       : ^1     # public dep of futures_codec, so they should always change together
+  serde       : ^1     # we require Serialize + Deserialize
 
   # Private dependencies
   #
@@ -67,7 +66,7 @@ dependencies:
 
 dev-dependencies:
 
-  futures_ringbuf : ^0.2
+  futures_ringbuf : ^0.3
   futures         : ^0.3
 
 
