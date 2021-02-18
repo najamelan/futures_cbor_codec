@@ -1,5 +1,10 @@
 # Changelog
 
+# 0.3.0 - 2021-02-18
+
+- **BREAKING CHANGE**: update bytes to v1.
+- **BREAKING CHANGE**: switch to asynchronous-codec because futures-codec does not update it's deps.
+
 # 0.2.0 - 2019-12-28
 
 - **BREAKING CHANGE**: update bytes to 0.5.

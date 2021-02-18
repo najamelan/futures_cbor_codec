@@ -5,9 +5,9 @@ use
 {
 	futures_ringbuf    :: { *                                      } ,
 	futures            :: { SinkExt, StreamExt, executor::block_on } ,
-	futures_codec      :: { Framed                                 } ,
 	futures_cbor_codec :: { Codec                                  } ,
 	std                :: { collections::HashMap                   } ,
+	asynchronous_codec :: { Framed                                 } ,
 };
 
 

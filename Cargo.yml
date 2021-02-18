@@ -2,15 +2,29 @@ package:
 
   # When releasing to crates.io:
   #
+  # - last check for all TODO, FIXME, expect, unwrap.
+  # - recheck log statements (informative, none left that were just for development, ...)
+  # - `cargo +nightly doc` and re-read and final polish of documentation.
+  #
   # - Update CHANGELOG.md.
   # - Update version numbers in Cargo.yml, Cargo.toml, install section of readme.
-  # - verify CI result
-  # - test dependent crates
-  # - cargo publish
-  # - merge dev branch into master
-  # - create git tag
   #
-  version       : 0.2.0
+  # - `touch **.rs && cargo clippy --tests --examples --benches --all-features`
+  # - `cargo update`
+  # - `cargo udeps --all-targets --all-features`
+  # - `cargo audit`
+  # - `cargo crev crate verify --show-all --recursive` and review.
+  # - 'cargo test --all-targets --all-features'
+  #
+  # - push dev and verify CI result
+  # - `cargo test` on dependent crates
+  #
+  # - cargo publish
+  # - `git checkout master && git merge dev --no-ff`
+  # - `git tag x.x.x` with version number.
+  # - `git push && git push --tags`
+  #
+  version       : 0.3.0
   name          : futures_cbor_codec
   authors       : [ Naja Melan <najamelan@autistici.org> ]
   description   : A codec for framing an AsyncRead/AsyncWrite with cbor for all types that are serializable with serde
@@ -20,17 +34,14 @@ package:
   keywords      : [ cbor, futures, framing, serialization ]
   categories    : [ asynchronous, network-programming ]
   license       : Apache-2.0/MIT
+  exclude       : [ tests, examples, ci, .travis.yml, TODO.md, CONTRIBUTING.md ]
   edition       : "2018"
 
   metadata:
     docs:
       rs:
-        features: [ external_doc ]
-
-
-features:
-
-  external_doc: []
+        all-features: true
+        targets     : []
 
 
 badges:
@@ -44,11 +55,10 @@ dependencies:
   # Public dependencies (bump major if changing any version number here)
   # Means we use types from these crates in our public API.
   #
-  futures       : ^0.3
-  serde_cbor    : ^0.10
-  futures_codec : ^0.3   # traits Encoder/Decoder
-  bytes         : ^0.5   # public dep of futures_codec, so they should always change together
-  serde         : ^1     # we require Serialize + Deserialize
+  asynchronous-codec: ^0.6   # traits Encoder/Decoder
+  serde_cbor        : ^0.11
+  bytes             : ^1     # public dep of futures_codec, so they should always change together
+  serde             : ^1     # we require Serialize + Deserialize
 
   # Private dependencies
   #
@@ -56,8 +66,20 @@ dependencies:
 
 dev-dependencies:
 
-  futures_ringbuf : ^0.1
+  futures_ringbuf : ^0.3
   futures         : ^0.3
+
+
+build-dependencies:
+
+  rustc_version: ^0.3
+
+
+profile:
+
+  release:
+
+    codegen-units: 1
 
 
 target:

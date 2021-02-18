@@ -1,15 +1,11 @@
-// See: https://github.com/rust-lang/rust/issues/44732#issuecomment-488766871
-//
-#![cfg_attr( feature = "external_doc", feature(external_doc)         )]
-#![cfg_attr( feature = "external_doc", doc(include = "../README.md") )]
-//!
-
+#![ cfg_attr( nightly, feature( external_doc, doc_cfg    ) ) ]
+#![ cfg_attr( nightly, doc    ( include = "../README.md" ) ) ]
+#![ doc = "" ] // empty doc line to handle missing doc warning when the feature is missing.
 
 #![ doc    ( html_root_url = "https://docs.rs/futures_cbor_codec" ) ]
 #![ deny   ( missing_docs                                         ) ]
 #![ forbid ( unsafe_code                                          ) ]
 #![ allow  ( clippy::suspicious_else_formatting                   ) ]
-
 
 #![ warn
 (
@@ -37,11 +33,11 @@ use
 		marker :: { PhantomData                                           } ,
 	},
 
-	bytes         :: { BytesMut, Buf                                         } ,
-	serde         :: { { Deserialize, Serialize}                             } ,
-	serde_cbor    :: { de::{Deserializer, IoRead}, error::Error as CborError } ,
-	serde_cbor    :: { ser::{IoWrite, Serializer}                            } ,
-	futures_codec :: { {Decoder as IoDecoder, Encoder as IoEncoder }         } ,
+	bytes              :: { BytesMut, Buf                                         } ,
+	serde              :: { { Deserialize, Serialize}                             } ,
+	serde_cbor         :: { de::{Deserializer, IoRead}, error::Error as CborError } ,
+	serde_cbor         :: { ser::{IoWrite, Serializer}                            } ,
+	asynchronous_codec :: { {Decoder as IoDecoder, Encoder as IoEncoder }         } ,
 };
 
 
@@ -49,7 +45,7 @@ use
 //
 /// Errors returned by encoding and decoding.
 //
-#[derive(Debug)]
+#[derive(Debug)] #[ non_exhaustive ]
 //
 pub enum Error
 {
@@ -60,13 +56,6 @@ pub enum Error
 	/// An error happend when encoding/decoding Cbor data.
 	//
 	Cbor(CborError),
-
-	// This forces users to add a `_ =>` in match statements, so that future variants can be
-	// added without it being a breaking change.
-	// TODO: track: https://github.com/rust-lang/rust/issues/44109
-	//
-	#[doc(hidden)]
-	__NonExhaustive__,
 }
 
 impl From<IoError> for Error {
@@ -86,7 +75,6 @@ impl Display for Error {
 		match self {
 			Error::Io(e) => e.fmt(fmt),
 			Error::Cbor(e) => e.fmt(fmt),
-			Error::__NonExhaustive__ => unreachable!(),
 		}
 	}
 }
@@ -96,7 +84,6 @@ impl ErrorTrait for Error {
 		match self {
 			Error::Io(e) => Some(e),
 			Error::Cbor(e) => Some(e),
-			Error::__NonExhaustive__ => unreachable!(),
 		}
 	}
 }
@@ -132,7 +119,9 @@ impl<R: Read> Read for Counted<'_, R> {
 /// that is `serde`s `Deserialize` can be decoded this way.
 //
 #[derive(Clone, Debug)]
-pub struct Decoder<Item> {
+//
+pub struct Decoder<Item>
+{
 	_data: PhantomData<fn() -> Item>,
 }
 
@@ -166,9 +155,8 @@ impl<'de, Item: Deserialize<'de>> IoDecoder for Decoder<Item>
 
 	fn decode( &mut self, src: &mut BytesMut ) -> Result<Option<Item>, Error>
 	{
-		let mut pos = 0;
-
-		let mut slice: &[u8] = src;
+		let mut pos          = 0   ;
+		let mut slice: &[u8] = src ;
 
 		let reader = IoRead::new( Counted
 		{
@@ -231,9 +219,9 @@ pub enum SdMode
 //
 pub struct Encoder<Item>
 {
-	_data: PhantomData<fn(Item)>,
-	sd: SdMode,
-	packed: bool,
+	_data : PhantomData<fn(Item)> ,
+	sd    : SdMode                ,
+	packed: bool                  ,
 }
 
 impl<Item: Serialize> Encoder<Item>
@@ -243,11 +231,13 @@ impl<Item: Serialize> Encoder<Item>
 	/// By default, it doesn't do packed encoding (it includes struct field names) and it doesn't
 	/// prefix the frames with self-describe tag.
 	//
-	pub fn new() -> Self {
-		Self {
-			_data: PhantomData,
-			sd: SdMode::Never,
-			packed: false,
+	pub fn new() -> Self
+	{
+		Self
+		{
+			_data : PhantomData   ,
+			sd    : SdMode::Never ,
+			packed: false         ,
 		}
 	}
 
@@ -264,7 +254,8 @@ impl<Item: Serialize> Encoder<Item>
 	/// but it also means the decoding end must know the exact order of fields and it can't be
 	/// something like python, which would want to get a dictionary out of it.
 	//
-	pub fn packed(self, packed: bool) -> Self {
+	pub fn packed(self, packed: bool) -> Self
+	{
 		Self { packed, ..self }
 	}
 }
@@ -418,8 +409,6 @@ mod tests {
 	use std::collections::HashMap;
 	use std::sync::Arc;
 
-	use serde_cbor;
-
 	use super::*;
 
 	type TestData = HashMap<String, usize>;
@@ -500,7 +489,7 @@ mod tests {
 		let decoded = serde_cbor::from_slice::<TestData>(&buffer[pos1..]).unwrap();
 		assert_eq!(data, decoded);
 		// Encoding once more the size stays the same
-		encoder.encode(data.clone(), &mut buffer).unwrap();
+		encoder.encode(data, &mut buffer).unwrap();
 		let pos3 = buffer.len();
 		assert_eq!(pos2 - pos1, pos3 - pos2);
 	}

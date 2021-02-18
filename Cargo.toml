@@ -6,19 +6,18 @@ status = "actively-developed"
 [badges.travis-ci]
 repository = "najamelan/futures_cbor_codec"
 
+[build-dependencies]
+rustc_version = "^0.3"
+
 [dependencies]
-bytes = "^0.5"
-futures = "^0.3"
-futures_codec = "^0.3"
+asynchronous-codec = "^0.6"
+bytes = "^1"
 serde = "^1"
-serde_cbor = "^0.10"
+serde_cbor = "^0.11"
 
 [dev-dependencies]
 futures = "^0.3"
-futures_ringbuf = "^0.1"
-
-[features]
-external_doc = []
+futures_ringbuf = "^0.3"
 
 [package]
 authors = ["Naja Melan <najamelan@autistici.org>"]
@@ -26,17 +25,23 @@ categories = ["asynchronous", "network-programming"]
 description = "A codec for framing an AsyncRead/AsyncWrite with cbor for all types that are serializable with serde"
 documentation = "https://docs.rs/futures_cbor_codec"
 edition = "2018"
+exclude = ["tests", "examples", "ci", ".travis.yml", "TODO.md", "CONTRIBUTING.md"]
 keywords = ["cbor", "futures", "framing", "serialization"]
 license = "Apache-2.0/MIT"
 name = "futures_cbor_codec"
 readme = "README.md"
 repository = "https://github.com/najamelan/futures_cbor_codec"
-version = "0.2.0"
+version = "0.3.0"
 
 [package.metadata]
 [package.metadata.docs]
 [package.metadata.docs.rs]
-features = ["external_doc"]
+all-features = true
+targets = []
+
+[profile]
+[profile.release]
+codegen-units = 1
 
 [target]
 [target."cfg(target_arch = \"wasm32\")"]

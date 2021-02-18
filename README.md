@@ -1,7 +1,7 @@
 # futures_cbor_codec
 
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-[![Build Status](https://api.travis-ci.org/najamelan/futures_cbor_codec.svg?branch=master)](https://travis-ci.org/najamelan/futures_cbor_codec)
+[![Build Status](https://github.com/najamelan/futures_cbor_codec/workflows/ci/badge.svg?branch=master)](https://github.com/najamelan/futures_cbor_codec/actions)
 [![Docs](https://docs.rs/futures_cbor_codec/badge.svg)](https://docs.rs/futures_cbor_codec)
 [![crates.io](https://img.shields.io/crates/v/futures_cbor_codec.svg)](https://crates.io/crates/futures_cbor_codec)
 
@@ -66,8 +66,7 @@ items.
 
 The encoded and decoded items are independent (you may want to encode references and decode
 owned data, or the protocol might be asymetric). If you want just one direction, you can use
-[`Decoder`](struct.Decoder.html) or [`Encoder`](struct.Encoder.html). If you want both, you
-better use [`Codec`](struct.Codec.html).
+[`Decoder`] or [`Encoder`]. If you want both, you better use [`Codec`].
 
 Note that this is useful if the CBOR itself defines the frames. If the messages are delimited
 in some other way (eg. length-prefix encoding) and CBOR is only the payload, you'd use a codec
@@ -87,7 +86,7 @@ use
 {
    futures_ringbuf    :: { *                                      } ,
    futures            :: { SinkExt, StreamExt, executor::block_on } ,
-   futures_codec      :: { Framed                                 } ,
+   asynchronous_codec :: { Framed                                 } ,
    futures_cbor_codec :: { Codec                                  } ,
    std                :: { collections::HashMap                   } ,
 };
@@ -110,7 +109,6 @@ fn test_data() -> TestData
 
    data
 }
-
 
 
 // In a real life scenario the sending and receiving end usually are in different processes.
@@ -152,16 +150,8 @@ Api documentation can be found on [docs.rs](https://docs.rs/futures_cbor_codec).
 
 ## Contributing
 
-This repository accepts contributions. Ideas, questions, feature requests and bug reports can be filed through github issues.
+Please check out the [contribution guidelines](https://github.com/najamelan/futures_cbor_codec/blob/master/CONTRIBUTING.md).
 
-Pull Requests are welcome on github. By commiting pull requests, you accept that your code might be modified and reformatted to fit the project coding style or to improve the implementation. Please discuss what you want to see modified before filing a pull request if you don't want to be doing work that might be rejected.
-
-Please file PR's against the `dev` branch, don't forget to update the changelog and the documentation.
-
-Unless you explicitly state otherwise, any contribution intentionally
-submitted for inclusion in the work by you, as defined in the Apache-2.0
-license, shall be dual licensed as above, without any additional terms
-or conditions.
 
 ### Testing
 
@@ -178,13 +168,11 @@ or
 
 ### Code of conduct
 
-Any of the behaviors described in [point 4 "Unacceptable Behavior" of the Citizens Code of Conduct](http://citizencodeofconduct.org/#unacceptable-behavior) are not welcome here and might get you banned. If anyone including maintainers and moderators of the project fail to respect these/your limits, you are entitled to call them out.
+Any of the behaviors described in [point 4 "Unacceptable Behavior" of the Citizens Code of Conduct](https://github.com/stumpsyn/policies/blob/master/citizen_code_of_conduct.md#4-unacceptable-behavior) are not welcome here and might get you banned. If anyone, including maintainers and moderators of the project, fail to respect these/your limits, you are entitled to call them out.
 
 ## License
 
 Licensed under either of
 
- * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
- * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
-
-at your option.
+ * Apache License, Version 2.0, [LICENSE-APACHE](http://www.apache.org/licenses/LICENSE-2.0)
+ * MIT license [LICENSE-MIT](http://opensource.org/licenses/MIT) at your option.
