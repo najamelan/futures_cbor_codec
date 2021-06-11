@@ -1,4 +1,18 @@
-# Changelog
+# futures_cbor_codec Changelog
+
+
+## [Unreleased]
+
+  [Unreleased]: https://github.com/najamelan/futures_cbor_codec/compare/0.3.1...dev
+
+
+## [0.3.1] - 2021-06-11
+
+   [0.3.1]: https://github.com/najamelan/futures_cbor_codec/compare/0.3.0...0.3.1
+
+### Updated
+  - Remove external_doc for rustdoc 1.54.
+
 
 # 0.3.0 - 2021-02-18
 

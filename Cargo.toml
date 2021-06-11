@@ -7,7 +7,7 @@ status = "actively-developed"
 repository = "najamelan/futures_cbor_codec"
 
 [build-dependencies]
-rustc_version = "^0.3"
+rustc_version = "^0.4"
 
 [dependencies]
 asynchronous-codec = "^0.6"
@@ -31,7 +31,7 @@ license = "Apache-2.0/MIT"
 name = "futures_cbor_codec"
 readme = "README.md"
 repository = "https://github.com/najamelan/futures_cbor_codec"
-version = "0.3.0"
+version = "0.3.1"
 
 [package.metadata]
 [package.metadata.docs]
