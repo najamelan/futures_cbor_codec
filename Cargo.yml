@@ -24,7 +24,7 @@ package:
   # - `git tag x.x.x` with version number.
   # - `git push && git push --tags`
   #
-  version       : 0.3.0
+  version       : 0.3.1
   name          : futures_cbor_codec
   authors       : [ Naja Melan <najamelan@autistici.org> ]
   description   : A codec for framing an AsyncRead/AsyncWrite with cbor for all types that are serializable with serde
@@ -72,7 +72,7 @@ dev-dependencies:
 
 build-dependencies:
 
-  rustc_version: ^0.3
+  rustc_version: ^0.4
 
 
 profile:
