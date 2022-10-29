@@ -79,9 +79,6 @@ This crate works on WASM.
 
 ### Basic example
 ```rust
-#![feature(async_await)]
-
-
 use
 {
    futures_ringbuf    :: { *                                      } ,
