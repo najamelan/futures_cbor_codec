@@ -84,4 +84,7 @@ jobs:
       - name: Run tests on wasm
         run: bash ci/wasm.bash
 
+      - name: Run cargo-deny
+        uses: EmbarkStudios/cargo-deny-action@v1
+
 
