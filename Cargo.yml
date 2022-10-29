@@ -33,7 +33,7 @@ package:
   readme        : README.md
   keywords      : [ cbor, futures, framing, serialization ]
   categories    : [ asynchronous, network-programming ]
-  license       : Apache-2.0/MIT
+  license       : Apache-2.0 OR MIT
   exclude       : [ tests, examples, ci, .travis.yml, TODO.md, CONTRIBUTING.md ]
   edition       : "2018"
 
